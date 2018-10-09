@@ -1,0 +1,16 @@
+FROM golang:1.11.0 as builder
+
+WORKDIR /go/pad
+ADD ./ .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags  "-s -w"
+
+FROM alpine:latest
+#RUN apt-get update && apt-get install -y wget
+
+#FROM prom/pushgateway:v0.4.0
+
+COPY --from=builder /go/pad/eureka-pushgateway /bin/eureka-pushgateway
+
+EXPOSE 9092
+
+ENTRYPOINT [ "/bin/pushgateway","-host","$HOST_IP" ," -eureka","$EUREKA_URL","-PORT","$PORT","-EPORT","$EPORT"]
