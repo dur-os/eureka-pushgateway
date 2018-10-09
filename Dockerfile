@@ -2,7 +2,7 @@ FROM golang:1.11.0 as builder
 
 WORKDIR /go/pad
 ADD ./ .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags  "-s -w"
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -mod=vendor -ldflags  "-s -w" -o "eureka-pushgateway"
 
 FROM alpine:latest
 #RUN apt-get update && apt-get install -y wget
