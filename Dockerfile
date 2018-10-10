@@ -14,4 +14,4 @@ COPY --from=builder /go/pad/eureka-pushgateway ./
 
 EXPOSE 9092
 
-ENTRYPOINT [ "./eureka-pushgateway","-host","$HOST_IP" ," -eureka","$EUREKA_URL","-PORT","$PORT","-EPORT","$EPORT"]
+CMD [ "./eureka-pushgateway","-host","$HOST_IP" ,"-eureka","$EUREKA_URL","-PORT","$PORT","-EPORT","$EPORT"]
