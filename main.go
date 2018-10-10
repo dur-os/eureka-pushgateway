@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var (
@@ -17,6 +18,7 @@ var (
 	EurekaPushGatewayPort int
 	HostIP                string
 	EurekaUrl             string
+	TimeOut               int
 )
 
 func init() {
@@ -24,6 +26,7 @@ func init() {
 	flag.StringVar(&EurekaUrl, "eureka", "127.0.0.1", "this eureka url")
 	flag.IntVar(&PushGatewayPort, "port", 9091, "this PushGateway Port")
 	flag.IntVar(&EurekaPushGatewayPort, "eport", 9092, "this Eureka PushGateway Port")
+	flag.IntVar(&TimeOut, "timeout", 30, "this PushGateway push service timeout second")
 }
 
 func main() {
@@ -31,8 +34,9 @@ func main() {
 	logging.SetLevel(logging.INFO, "fargo")
 	connection := fargo.NewConn(strings.Split(EurekaUrl, ",")...)
 	logger := log.NewNopLogger()
+	host := HostIP + ":" + strconv.Itoa(PushGatewayPort)
 	instance := &fargo.Instance{
-		InstanceId:       HostIP + ":" + strconv.Itoa(PushGatewayPort),
+		InstanceId:       host,
 		HostName:         HostIP,
 		Port:             PushGatewayPort,
 		PortEnabled:      true,
@@ -59,5 +63,17 @@ func main() {
 	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
 		writer.Write([]byte(`ok`))
 	})
+	go job(host, TimeOut)
 	http.ListenAndServe(":9092", nil)
+}
+
+func job(host string, timeout int) {
+	ticker := time.NewTicker(time.Duration(5) * time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			CheckJob(host, timeout)
+		}
+	}
 }
