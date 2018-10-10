@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-var log = logging.MustGetLogger("eureka-pushgateway")
+var logger = logging.MustGetLogger("eureka-pushgateway")
 
 func CheckJob(host string, timeout int) {
 	response, _ := http.Get(fmt.Sprintf("http://%s/metrics", host))
@@ -34,12 +34,12 @@ func CheckJob(host string, timeout int) {
 				deleteGroup := fmt.Sprintf("http://%s/metrics/job/%s/instance/%s", host, job, url.QueryEscape(instance))
 				request, err := http.NewRequest(http.MethodDelete, deleteGroup, nil)
 				if err != nil {
-					log.Errorf("delete group URl:%s ,err: %v", deleteGroup, err)
+					logger.Errorf("delete group URl:%s ,err: %v", deleteGroup, err)
 					continue
 				}
 				_, err = http.DefaultClient.Do(request)
 				if err != nil {
-					log.Errorf("delete group URl:%s ,err: %v", deleteGroup, err)
+					logger.Errorf("delete group URl:%s ,err: %v", deleteGroup, err)
 					continue
 				}
 			}
