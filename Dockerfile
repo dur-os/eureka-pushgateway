@@ -11,7 +11,7 @@ FROM alpine:latest
 WORKDIR /pushgateway
 
 COPY --from=builder /go/pad/eureka-pushgateway ./
-
+ADD start.sh ./
 EXPOSE 9092
 
-CMD [ "./eureka-pushgateway","-host","$HOST_IP" ,"-eureka","$EUREKA_URL","-PORT","$PORT","-EPORT","$EPORT"]
+CMD [ "./start.sh"]
