@@ -26,7 +26,7 @@ func init() {
 	flag.StringVar(&EurekaUrl, "eureka", "127.0.0.1", "this eureka url")
 	flag.IntVar(&PushGatewayPort, "port", 9091, "this PushGateway Port")
 	flag.IntVar(&EurekaPushGatewayPort, "eport", 9092, "this Eureka PushGateway Port")
-	flag.IntVar(&TimeOut, "timeout", 30, "this PushGateway push service timeout second")
+	flag.IntVar(&TimeOut, "timeout", 10, "this PushGateway push service timeout second")
 }
 
 func main() {
@@ -63,8 +63,8 @@ func main() {
 	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
 		writer.Write([]byte(`ok`))
 	})
-	go job(host, TimeOut)
-	http.ListenAndServe(":9092", nil)
+	//go job(host, TimeOut)
+	http.ListenAndServe(":"+strconv.Itoa(EurekaPushGatewayPort), nil)
 }
 
 func job(host string, timeout int) {
