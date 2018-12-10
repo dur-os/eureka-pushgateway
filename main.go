@@ -73,7 +73,7 @@ func main() {
 }
 
 func job(instances []string, timeout int) {
-	ticker := time.NewTicker(time.Duration(20) * time.Second)
+	ticker := time.NewTicker(time.Duration(30) * time.Minute)
 	defer ticker.Stop()
 	for {
 		select {

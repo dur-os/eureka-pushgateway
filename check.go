@@ -12,11 +12,11 @@ import (
 var logger = logging.MustGetLogger("eureka-pushgateway")
 
 func CheckJob(host string, timeout int) {
+	second := time.Now().Unix()
 	response, _ := http.Get(fmt.Sprintf("http://%s/metrics", host))
 	var parser expfmt.TextParser
 	metricFamilies, _ := parser.TextToMetricFamilies(response.Body)
 	if metricFamily, ok := metricFamilies["push_time_seconds"]; ok {
-		second := time.Now().Unix()
 		for _, metric := range metricFamily.Metric {
 			v := metric.Gauge.Value
 			c := float64(second) - *v
