@@ -19,6 +19,7 @@ var (
 	HostIP                string
 	EurekaUrl             string
 	TimeOut               int
+	Instances             string
 )
 
 func init() {
@@ -27,6 +28,7 @@ func init() {
 	flag.IntVar(&PushGatewayPort, "port", 9091, "this PushGateway Port")
 	flag.IntVar(&EurekaPushGatewayPort, "eport", 9092, "this Eureka PushGateway Port")
 	flag.IntVar(&TimeOut, "timeout", 10, "this PushGateway push service timeout second")
+	flag.StringVar(&Instances, "instances", "", "this PushGateway Instances")
 }
 
 func main() {
@@ -63,17 +65,22 @@ func main() {
 	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
 		writer.Write([]byte(`ok`))
 	})
+	if Instances != "" {
+		go job(strings.Split(Instances,","), TimeOut)
+	}
 	//go job(host, TimeOut)
 	http.ListenAndServe(":"+strconv.Itoa(EurekaPushGatewayPort), nil)
 }
 
-func job(host string, timeout int) {
-	ticker := time.NewTicker(time.Duration(5) * time.Second)
+func job(instances []string, timeout int) {
+	ticker := time.NewTicker(time.Duration(20) * time.Second)
 	defer ticker.Stop()
 	for {
 		select {
 		case <-ticker.C:
-			CheckJob(host, timeout)
+			for _, instance := range instances {
+				CheckJob(instance, timeout)
+			}
 		}
 	}
 }
