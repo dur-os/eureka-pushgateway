@@ -38,7 +38,7 @@ func PrometheusCheckJob(host string, timeout int) {
 						var job = metric["exported_job"].(string)
 						var instance = metric["exported_instance"].(string)
 						deleteGroup := fmt.Sprintf("http://%s/metrics/job/%s/instance/%s", metric["instance"].(string), job, url.QueryEscape(instance))
-						logger.Infof("Job: %s , instance : %s timeout : %f", job, instance, result)
+						logger.Infof("Job: %s , instance : %s now : %f, pushTime: %s", job, instance,  values[0],values[1].(string))
 						request, err := http.NewRequest(http.MethodDelete, deleteGroup, nil)
 						if err != nil {
 							logger.Errorf("delete group URl:%s ,err: %v", deleteGroup, err)
